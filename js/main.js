@@ -57,6 +57,8 @@ function openAddAnimalModal() {
     if (form) form.reset();
     const idInput = document.getElementById("animalId");
     if (idInput) idInput.value = "";
+    const adopterInput = document.getElementById("animalAdopter");
+    if (adopterInput) adopterInput.value = "";
     const title = document.getElementById("animalModalTitle");
     if (title) title.textContent = "Add New Animal";
 }
@@ -73,6 +75,7 @@ function editAnimal(index) {
     document.getElementById("animalAge").value = animal.age;
     document.getElementById("animalGender").value = animal.gender;
     document.getElementById("animalStatus").value = animal.status;
+    document.getElementById("animalAdopter").value = animal.adopter && animal.adopter !== "-" ? animal.adopter : "";
 
     document.getElementById("animalModalTitle").textContent = "Edit Animal Details";
     const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById("animalModal"));
@@ -139,8 +142,8 @@ function renderAdoptionHistoryTable() {
                 <td class="fw-semibold">#A${1000 + index}</td>
                 <td>${animal.name}</td>
                 <td>${animal.species} (${animal.breed})</td>
-                <td>${animal.adopter || "Walk-in Adopter"}</td>
-                <td>${animal.adoptionDate || "2026-05-01"}</td>
+                <td>${animal.adopter && animal.adopter !== "-" ? animal.adopter : "Registered Adopter"}</td>
+                <td>${animal.adoptionDate || new Date().toISOString().split("T")[0]}</td>
                 <td><span class="badge bg-info">Completed</span></td>
             `;
             adoptionBody.appendChild(row);
@@ -180,6 +183,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const age = document.getElementById("animalAge").value;
             const gender = document.getElementById("animalGender").value;
             const status = document.getElementById("animalStatus").value;
+            const adopterInput = document.getElementById("animalAdopter").value.trim();
 
             const animals = getAnimals();
 
@@ -188,13 +192,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 animals[editIndex] = {
                     ...existing,
                     name, species, breed, age, gender, status,
-                    adopter: status === "adopted" && existing.adopter === "-" ? "Registered Adopter" : existing.adopter,
-                    adoptionDate: status === "adopted" && existing.adoptionDate === "-" ? new Date().toISOString().split("T")[0] : existing.adoptionDate
+                    adopter: status === "adopted" ? (adopterInput || "Registered Adopter") : "-",
+                    adoptionDate: status === "adopted" && (!existing.adoptionDate || existing.adoptionDate === "-") ? new Date().toISOString().split("T")[0] : (status === "adopted" ? existing.adoptionDate : "-")
                 };
             } else {
                 animals.push({
                     name, species, breed, age, gender, status,
-                    adopter: status === "adopted" ? "Registered Adopter" : "-",
+                    adopter: status === "adopted" ? (adopterInput || "Registered Adopter") : "-",
                     adoptionDate: status === "adopted" ? new Date().toISOString().split("T")[0] : "-"
                 });
             }
@@ -205,6 +209,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (modalInstance) modalInstance.hide();
 
             renderAnimalTable(searchInput ? searchInput.value : "", statusSelect ? statusSelect.value : "all");
+            renderAdoptionHistoryTable();
             updateDashboardStatistics();
             animalForm.reset();
             document.getElementById("animalId").value = "";
