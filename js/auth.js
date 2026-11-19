@@ -1,4 +1,4 @@
-const defaultUsers = [
+const HARDCODED_USERS = [
     {
         name: "Admin",
         email: "admin@pawpulse.com",
@@ -13,96 +13,59 @@ const defaultUsers = [
     }
 ];
 
-function getUsers() {
-    const storedUsers = localStorage.getItem("pawpulseUsers");
-    if (storedUsers) {
-        return JSON.parse(storedUsers);
-    }
-    localStorage.setItem(
-        "pawpulseUsers",
-        JSON.stringify(defaultUsers)
-    );
-
-    return defaultUsers;
-}
-
-function saveUsers(users) {
-    localStorage.setItem(
-        "pawpulseUsers",
-        JSON.stringify(users)
-    );
-}
-
 function showMessage(elementId, message, type) {
     const messageElement = document.getElementById(elementId);
-    if (!messageElement) {
-        return;
-    }
+    if (!messageElement) return;
     messageElement.textContent = message;
-    messageElement.className = "form-message text-" + type;
+    messageElement.className = `form-message mb-3 small text-${type} text-center fw-bold`;
 }
 
 const loginForm = document.getElementById("loginForm");
-
 if (loginForm) {
     loginForm.addEventListener("submit", function (event) {
         event.preventDefault();
 
-        const email = document
-            .getElementById("loginEmail")
-            .value.trim()
-            .toLowerCase();
+        const email = document.getElementById("loginEmail").value.trim().toLowerCase();
+        const password = document.getElementById("loginPassword").value;
 
-        const password = document
-            .getElementById("loginPassword")
-            .value;
-
-        if (email === "" || password === "") {
-            showMessage(
-                "loginMessage",
-                "Please enter your email and password.",
-                "danger"
-            );
+        if (!email || !password) {
+            showMessage("loginMessage", "Please enter both email and password.", "danger");
             return;
         }
 
-        const users = getUsers();
-        const matchedUser = users.find(function (user) {
-            return user.email.toLowerCase() === email &&
-                   user.password === password;
-        });
+        const matchedUser = HARDCODED_USERS.find(
+            user => user.email.toLowerCase() === email && user.password === password
+        );
 
         if (matchedUser) {
-
             const currentUser = {
                 name: matchedUser.name,
                 email: matchedUser.email,
                 role: matchedUser.role
             };
+            sessionStorage.setItem("pawpulseCurrentUser", JSON.stringify(currentUser));
+            showMessage("loginMessage", "Login successful! Redirecting to dashboard...", "success");
 
-            localStorage.setItem(
-                "pawpulseCurrentUser",
-                JSON.stringify(currentUser)
-            );
-
-            showMessage(
-                "loginMessage",
-                "Login successful! Redirecting...",
-                "success"
-            );
-
-            window.location.href = "dashboard.html";
-
+            setTimeout(() => {
+                window.location.href = "dashboard.html";
+            }, 600);
         } else {
-            showMessage(
-                "loginMessage",
-                "Invalid email or password. Please try again.",
-                "danger"
-            );
+            showMessage("loginMessage", "Invalid email or password. Please check the demo credentials below.", "danger");
         }
     });
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+    const welcomeSpan = document.getElementById("welcomeUser");
+    const userJson = sessionStorage.getItem("pawpulseCurrentUser");
+
+    if (welcomeSpan && userJson) {
+        const user = JSON.parse(userJson);
+        welcomeSpan.textContent = `Welcome, ${user.name}!`;
+    }
+});
+
 function logoutUser() {
-    localStorage.removeItem("pawpulseCurrentUser");
+    sessionStorage.removeItem("pawpulseCurrentUser");
     window.location.href = "index.html";
 }
