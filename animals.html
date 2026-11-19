@@ -55,7 +55,8 @@
                         <button class="btn btn-outline-danger btn-sm" onclick="logoutUser()">
                             <i class="bi bi-box-arrow-right"></i> Logout
                         </button>
-                </li>
+                    </li>
+                </ul>
             </div>
         </div>
     </nav>
@@ -119,6 +120,7 @@
                                 <small class="text-muted">Successfully adopted</small>
                             </div>
                             <i class="bi bi-heart-fill fs-1 text-danger"></i>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -299,6 +301,18 @@
                                     <option value="unavailable">Unavailable</option>
                                 </select>
                             </div>
+
+                            <div class="col-md-12">
+                                <label for="animalAdopter" class="form-label">
+                                    Adopter Name (If Adopted)
+                                </label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="animalAdopter"
+                                    placeholder="Enter adopter name if status is adopted"
+                                >
+                            </div>
                         </div>
 
                         <div class="mt-4 d-flex justify-content-end gap-2">
@@ -319,9 +333,8 @@
             </div>
         </div>
     </div>
-</main>
 
-     <footer class="text-center py-4 mt-5 border-top">
+    <footer class="text-center py-4 mt-5 border-top">
         <p class="text-muted mb-0">
             &copy; 2026 PawPulse Internal Shelter Management System. All rights reserved.
         </p>
