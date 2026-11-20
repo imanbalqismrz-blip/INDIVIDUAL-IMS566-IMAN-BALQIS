@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 },
                 title: {
                     display: true,
-                    text: "Shelter Analytics: Monthly Overview"
+                    text: "Shelter Analytics: Monthly Overview 2025"
                 }
             },
             scales: {
